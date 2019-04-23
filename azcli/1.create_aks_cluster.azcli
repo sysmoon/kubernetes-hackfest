@@ -1,26 +1,17 @@
 ### az login
-az login -u sysmoon@gmail.com
+az login -u yourid@xxx.com
 
 ### select subscription
 az account list --all
-az account set --subscription "3a339a2d-3ff0-4e94-ba3e-8ad7763bca42j"
+az account set --subscription "your subscription id"
 az account show
 
 ### create service principal
 az ad sp create-for-rbac --skip-assignment
 
-### delete service principal
-# az ad sp delete --id "f1ae988d-5455-44a7-a54c-9aa192934b28"
-
-# Persist for Later Sessions in Case of Timeout
-APPID=c3ae3e87-69c4-4ff7-b424-e118eddba346
-echo export APPID=$APPID >> ~/.bashrc
-CLIENTSECRET=30a792eb-669c-4116-9adf-3d3e9577e760
-echo export CLIENTSECRET=$CLIENTSECRET >> ~/.bashrc
-
 ### create unique identifier suffic for resources
 #UNIQUE_SUFFIX=$USER$RANDOM
-UNIQUE_SUFFIX='tvdev'
+UNIQUE_SUFFIX='your_project_name'
 
 ### Remove Underscores and Dashes (Not Allowed in AKS and ACR Names)
 UNIQUE_SUFFIX="${UNIQUE_SUFFIX//_}"
@@ -29,7 +20,6 @@ UNIQUE_SUFFIX="${UNIQUE_SUFFIX//-}"
 echo $UNIQUE_SUFFIX
 # Persist for Later Sessions in Case of Timeout
 echo export UNIQUE_SUFFIX=$UNIQUE_SUFFIX >> ~/.bashrc
-
 
 ### create azure rg
 # Set Resource Group Name using the unique suffix
@@ -40,7 +30,7 @@ echo export RGNAME=$RGNAME >> ~/.bashrc
 # Set Region (Location)
 LOCATION=southeastasia
 # Persist for Later Sessions in Case of Timeout
-echo export LOCATION=southeastasia >> ~/.bashrc
+echo export LOCATION=$LOCATION >> ~/.bashrc
 # Create Resource Group
 az group create -n $RGNAME -l $LOCATION
 
@@ -87,13 +77,10 @@ kubectl get nodes
 kubectl cluster-info
 
 
-################
-# namespace setup
-################
-KUBE_HOME='/Users/sysmoon/lecture/k8s/kubernetes-hackfest'
+### namespace setup
+KUBE_HOME='/your/path/kubernetes-hackfest'
 echo $KUBE_HOME
 
-# 1. create namespace
 # Create namespaces
 kubectl apply -f $KUBE_HOME/labs/create-aks-cluster/create-namespaces.yaml
 

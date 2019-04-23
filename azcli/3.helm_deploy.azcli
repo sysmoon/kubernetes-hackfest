@@ -1,21 +1,16 @@
-### az login
-az login -u sysmoon@gmail.com
-
-KUBE_HOME='/Users/sysmoon/lecture/k8s/kubernetes-hackfest'
-echo $KUBE_HOME
-
-### select subscription
-az account list --all
-az account set --subscription "Microsoft Azure"
-az account show
-
 # 1. install helm
 kubectl apply -f $KUBE_HOME/labs/helm-setup-deploy/rbac-config.yaml
 helm init --service-account tiller --upgrade
+
 # check helm version
 helm version
 
 # 2. Review the Helm Chart components
+helm tamplate  $KUBE_HOME/charts/data-api
+helm tamplate  $KUBE_HOME/charts/flight-api
+helm tamplate  $KUBE_HOME/charts/quake-api
+helm tamplate  $KUBE_HOME/charts/service-tracker-ui
+helm tamplate  $KUBE_HOME/charts/weather-api
 
 # 3. Customize Chart Parameters
 az acr list -o table --query "[].loginServer"
