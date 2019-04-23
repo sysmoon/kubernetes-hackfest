@@ -1,0 +1,48 @@
+### az login
+az login -u sysmoon@gmail.com
+
+
+# 1. create ACR
+# Use the UNIQUE_SUFFIX from the first lab. Validate that the value is still set.
+echo $UNIQUE_SUFFIX
+# Set Azure Container Registry Name
+export ACRNAME=acrhackfest$UNIQUE_SUFFIX
+# Check ACR Name (Can Only Container lowercase)
+echo $ACRNAME
+# Persist for Later Sessions in Case of Timeout
+echo export ACRNAME=acrhackfest$UNIQUE_SUFFIX >> ~/.bashrc
+# Create Azure Container Registry
+az acr create --resource-group $RGNAME --name $ACRNAME --sku Basic
+
+# 2. Run bash script to authenticate with Azure Container Registry from AKS
+sh $KUBE_HOME/labs/build-application/reg-acr.sh $RGNAME $CLUSTERNAME $ACRNAME
+
+# 3. Create Application Insights Instance
+# create application insight in portal
+
+# 4. Deploy Cosmos DB
+export COSMOSNAME=cosmos$UNIQUE_SUFFIX
+# Check COSMOS Name
+echo $COSMOSNAME
+# Persist for Later Sessions in Case of Timeout
+echo export COSMOSNAME=cosmos$UNIQUE_SUFFIX >> ~/.bashrc
+# Create Cosmos DB
+az cosmosdb create --name $COSMOSNAME --resource-group $RGNAME --kind MongoDB
+
+# 5. Create Kubernetes secrets for access to CosmosDB and App Insights
+export MONGODB_USER=$(az cosmosdb show --name $COSMOSNAME --resource-group $RGNAME --query "name" -o tsv)
+export MONGODB_PASSWORD=$(az cosmosdb list-keys --name $COSMOSNAME --resource-group $RGNAME --query "primaryMasterKey" -o tsv)
+export APPINSIGHTS_INSTRUMENTATIONKEY='59807ac4-778d-4229-9888-b986d970dda1'
+
+kubectl create secret generic cosmos-db-secret --from-literal=user=$MONGODB_USER --from-literal=pwd=$MONGODB_PASSWORD --from-literal=appinsights=$APPINSIGHTS_INSTRUMENTATIONKEY -n hackfest
+
+# 6. Create Docker containers in ACR
+az acr build -t hackfest/data-api:1.0 -r $ACRNAME --no-logs $KUBE_HOME/app/data-api
+az acr build -t hackfest/flights-api:1.0 -r $ACRNAME --no-logs $KUBE_HOME/app/flights-api
+az acr build -t hackfest/quakes-api:1.0 -r $ACRNAME --no-logs $KUBE_HOME/app/quakes-api
+az acr build -t hackfest/weather-api:1.0 -r $ACRNAME --no-logs $KUBE_HOME/app/weather-api
+az acr build -t hackfest/service-tracker-ui:1.0 -r $ACRNAME --no-logs $KUBE_HOME/app/service-tracker-ui
+
+# You can see the status of the builds by running the command below.
+az acr task list-runs -r $ACRNAME -o table
+az acr task logs -r $ACRNAME --run-id cm1

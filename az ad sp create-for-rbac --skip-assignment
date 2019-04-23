@@ -1,0 +1,7 @@
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+export APPID=e9afbfcf-2636-4bcc-a126-eaea89c9fe6a
+export CLIENTSECRET=8ed2aee3-66eb-4ed2-8984-128a83b26825
+export UNIQUE_SUFFIX=aksdemo
